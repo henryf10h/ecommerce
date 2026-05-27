@@ -1,0 +1,54 @@
+schema: spec-driven
+
+context: |
+  Hybrid e-commerce platform on Base chain (USDC):
+  - Human storefront based on onchain-commerce-template (Next.js)
+  - Agent API based on x402-ai-starter (HTTP 402 payment protocol)
+  - Shared core domain: products, inventory, orders, settlement
+  Stack: Next.js 14+, TypeScript, pnpm workspaces + Turborepo, Vitest, Drizzle + Postgres.
+  Architecture: monorepo with @app/core (domain), @app/web (human UI), @app/agent-api (x402 endpoints).
+  Identity layer deferred until end-to-end flows work.
+
+strict_tdd: true
+
+testing:
+  strict_tdd: true
+  test_runner:
+    framework: vitest
+    command: pnpm test
+    status: to-be-installed
+  layers:
+    unit: planned (vitest)
+    integration: planned (vitest + @testing-library)
+    e2e: planned (playwright)
+  coverage:
+    command: pnpm test -- --coverage
+    status: planned
+  quality:
+    linter: eslint (planned)
+    type_checker: tsc --noEmit (planned)
+    formatter: prettier (planned)
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Identify affected packages in the monorepo (@app/core, @app/web, @app/agent-api)
+  specs:
+    - Use Given/When/Then format for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+    - Separate human and agent flows explicitly
+  design:
+    - Document boundary between core domain and presentation/transport layers
+    - Sequence diagrams for cross-package flows (especially payment settlement)
+  tasks:
+    - Group by phase (infra, core, web, agent-api, integration)
+    - Hierarchical numbering (1.1, 1.2)
+    - Atomic enough for one session
+  apply:
+    - Follow Clean/Hexagonal architecture — domain stays pure
+    - No HTTP, no Next.js, no x402 leakage into @app/core
+  verify:
+    - Run vitest if installed
+    - Validate both human and agent flows for each feature
+  archive:
+    - Warn before destructive removals

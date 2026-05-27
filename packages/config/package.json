@@ -1,0 +1,22 @@
+{
+  "name": "@app/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./eslint": "./eslint.config.mjs",
+    "./prettier": "./prettier.config.mjs",
+    "./tsconfig": "./tsconfig.json"
+  },
+  "scripts": {
+    "test": "echo 'no tests'",
+    "typecheck": "echo 'no ts source'"
+  },
+  "dependencies": {
+    "typescript-eslint": "^8.18.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.16.0",
+    "prettier": "^3.4.2"
+  }
+}
