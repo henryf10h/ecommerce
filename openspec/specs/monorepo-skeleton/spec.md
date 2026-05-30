@@ -113,11 +113,18 @@ The repo MUST pin Node and pnpm versions so all contributors get identical behav
 
 ### Requirement: Web and Agent-API Are Next.js-Ready
 
-The `@app/web` and `@app/agent-api` packages MUST declare `next` (^14, App Router) as a dependency and provide a minimal Next.js scaffold sufficient for future ports, but MUST NOT yet contain product, payment, or business logic.
+The `@app/web` package SHALL be the human-facing storefront with product, payment, and business logic. The `@app/agent-api` package MUST remain a minimal Next.js scaffold and MUST NOT yet contain product, payment, or business logic. Both MUST declare `next` (^14, App Router) as a dependency.
 
-#### Scenario: Next packages compile
+#### Scenario: Web storefront builds
 
-- GIVEN `packages/web` or `packages/agent-api`
-- WHEN running `pnpm --filter @app/web build` (or agent-api)
+- GIVEN `packages/web`
+- WHEN running `pnpm --filter @app/web build`
+- THEN the Next.js build SHALL succeed
+- AND it SHALL produce a storefront route at `/`
+
+#### Scenario: Agent-api remains scaffold
+
+- GIVEN `packages/agent-api`
+- WHEN running `pnpm --filter @app/agent-api build`
 - THEN the Next.js build SHALL succeed
 - AND it SHALL produce a default route returning a static placeholder

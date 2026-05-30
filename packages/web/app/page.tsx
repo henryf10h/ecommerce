@@ -1,10 +1,14 @@
+'use client';
 import { VERSION } from '@app/core';
+import OnchainStore from '../components/OnchainStore';
 
 export default function Page() {
   return (
-    <main>
-      <h1>commerce-x402 web</h1>
-      <p>core version: {VERSION}</p>
-    </main>
+    <>
+      <OnchainStore />
+      <div className="fixed bottom-1 right-1 z-50 text-[8px] text-gray-400">
+        v{VERSION}
+      </div>
+    </>
   );
 }
