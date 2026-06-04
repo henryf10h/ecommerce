@@ -7,29 +7,35 @@ import { getOrCreateSellerAccount } from './lib/accounts';
 import { checkIsScraper } from './lib/bot-detection';
 
 const network = env.NETWORK;
-const sellerAccount = await getOrCreateSellerAccount();
 
-export const x402Middleware = paymentMiddleware(
-  sellerAccount.address,
-  {
-    '/api/quote': {
-      price: '$0.005',
-      network,
-      config: {
-        description: 'Product quote — agent API access',
+type X402Handler = (request: NextRequest) => Promise<NextResponse<unknown>>;
+
+let x402Middleware: X402Handler | null = null;
+
+async function getX402Middleware(): Promise<X402Handler> {
+  if (!x402Middleware) {
+    const sellerAccount = await getOrCreateSellerAccount();
+    x402Middleware = paymentMiddleware(
+      sellerAccount.address,
+      {
+        '/api/quote': {
+          price: '$0.005',
+          network,
+          config: {
+            description: 'Product quote — agent API access',
+          },
+        },
       },
-    },
-  },
-  facilitator,
-);
+      facilitator,
+    );
+  }
+  return x402Middleware;
+}
 
 export async function middleware(request: NextRequest): Promise<NextResponse | Response> {
-  if (request.nextUrl.pathname.startsWith('/api')) {
-    return x402Middleware(request);
-  }
-
-  if (checkIsScraper(request)) {
-    return x402Middleware(request);
+  if (request.nextUrl.pathname.startsWith('/api') || checkIsScraper(request)) {
+    const mw = await getX402Middleware();
+    return mw(request);
   }
 
   return NextResponse.next();

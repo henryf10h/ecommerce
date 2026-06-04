@@ -9,7 +9,11 @@ let cdp: CdpClient | null = null;
 
 function getCdpClient(): CdpClient {
   if (!cdp) {
-    cdp = new CdpClient();
+    cdp = new CdpClient({
+      apiKeyId: env.CDP_API_KEY_ID,
+      apiKeySecret: env.CDP_API_KEY_SECRET,
+      walletSecret: env.CDP_WALLET_SECRET,
+    });
   }
   return cdp;
 }
