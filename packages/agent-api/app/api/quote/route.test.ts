@@ -1,9 +1,14 @@
-import { describe, expect, it } from 'vitest';
-import { GET } from './route';
+import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('../../../lib/with-x402', () => ({
+  withX402: (handler: Function) => handler,
+}));
+
+const { quoteHandler } = await import('./route');
 
 describe('GET /api/quote', () => {
   it('returns 200 with product id, name, and price', async () => {
-    const res = await GET();
+    const res = await quoteHandler();
     expect(res.status).toBe(200);
 
     const body = await res.json();
@@ -14,7 +19,7 @@ describe('GET /api/quote', () => {
   });
 
   it('price amount is a string representation of bigint', async () => {
-    const res = await GET();
+    const res = await quoteHandler();
     const body = await res.json();
 
     expect(body.price.amount).toEqual(expect.any(String));
@@ -22,7 +27,7 @@ describe('GET /api/quote', () => {
   });
 
   it('name is non-empty', async () => {
-    const res = await GET();
+    const res = await quoteHandler();
     const body = await res.json();
 
     expect(body.name).toEqual(expect.any(String));
