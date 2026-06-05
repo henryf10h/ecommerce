@@ -290,6 +290,7 @@ async function settlePayment(
       ],
     });
 
+    console.log(`[x402] ✅ Settlement on-chain: ${txHash}`);
     return { success: true, transaction: txHash };
   } catch (err) {
     console.warn('[x402] Settlement error (non-fatal for simulation):', err);

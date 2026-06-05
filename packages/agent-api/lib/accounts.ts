@@ -74,5 +74,29 @@ export async function getOrCreateSellerAccount(): Promise<Account> {
   const account = await cdpClient.evm.getOrCreateAccount({
     name: 'Seller',
   });
+
+  // On testnet, ensure the seller has ETH for gas
+  if (env.NETWORK === 'base-sepolia') {
+    const publicClient = getPublicClient();
+    const ethBalance = await publicClient.getBalance({
+      address: account.address as `0x${string}`,
+    });
+
+    // Request ETH if below threshold (0.01 ETH ≈ covers many settlements)
+    if (ethBalance < 10_000_000_000_000_000n) {
+      const { transactionHash } = await cdpClient.evm.requestFaucet({
+        address: account.address,
+        network: env.NETWORK,
+        token: 'eth',
+      });
+      const tx = await publicClient.waitForTransactionReceipt({
+        hash: transactionHash,
+      });
+      if (tx.status !== 'success') {
+        console.warn('[accounts] ETH faucet returned non-success status');
+      }
+    }
+  }
+
   return toAccount(account);
 }
